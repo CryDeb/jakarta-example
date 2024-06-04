@@ -1,0 +1,54 @@
+<web-app version="6.0"
+	xmlns="https://jakarta.ee/xml/ns/jakartaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
+	<!-- Resource / Role Mapping -->
+	<security-role>
+		<description>API</description>
+		<role-name>API</role-name>
+	</security-role>
+
+	<error-page>
+		<location>/general-error.html</location>
+	</error-page>
+
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Public</web-resource-name>
+			<!-- Allow basic website (index.html + its resources) -->
+			<url-pattern>/</url-pattern>
+			<url-pattern>/index.html</url-pattern>
+			<url-pattern>/images/*</url-pattern>
+			<url-pattern>/favicon.ico</url-pattern>
+			<!-- Example for an unsecure endpoint, which does not nee a client-cert -->
+			<url-pattern>/rest/hello</url-pattern>
+			<!-- This is here so you can figure out the client-cert CN -->
+			<url-pattern>/certinf.jsp</url-pattern>
+		</web-resource-collection>
+	</security-constraint>
+
+	<security-constraint>
+		<display-name>Secure Area</display-name>
+		<web-resource-collection>
+			<web-resource-name>protected_resources</web-resource-name>
+			<!-- Protect everything which is not defined in teh Public web resources with a client-cert -->
+			<url-pattern>/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<description>User with API role</description>
+			<!-- Define the role which has access to this constraint -->
+			<role-name>API</role-name>
+		</auth-constraint>
+		<user-data-constraint>
+			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+		</user-data-constraint>
+	</security-constraint>
+
+
+	<login-config>
+		<auth-method>CLIENT-CERT</auth-method>
+	</login-config>
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+	</welcome-file-list>
+</web-app>

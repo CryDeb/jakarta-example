@@ -1,0 +1,38 @@
+<server description="defaultServer">
+
+    <featureManager>
+        <feature>restfulWS-3.1</feature>
+        <feature>jsonb-3.0</feature>
+        <feature>transportSecurity-1.0</feature>
+        <feature>appSecurity-5.0</feature>
+    </featureManager>
+
+    <keyStore id="defaultKeyStore" password="password" />
+
+    <basicRegistry id="defaultBasicRegistry" realm="BasicRealm">
+        <!-- This is the user used for the mapping (Based on the Client-Cert).
+             The name has to match with the CN value from the client-cert  -->
+        <user name="API" password="xxx"/>
+    </basicRegistry>
+
+    <ssl id="defaultSSLConfig"
+         keyStoreRef="defaultKeyStore"
+         clientAuthenticationSupported="true"
+         trustDefaultCerts="true"/>
+
+    <sslDefault sslRef="defaultSSLConfig"/>
+
+    <httpEndpoint id="defaultHttpEndpoint" host="*" httpPort="-1" httpsPort="9443" />
+
+    <webApplication location="jakartaee-hello-world.war" contextRoot="/">
+        <application-bnd>
+            <security-role name="API">
+                <!-- Bind the user (could also be a group) to the role API which itself is defined in the web.xml file -->
+                <user name="API"/>
+            </security-role>
+        </application-bnd>
+    </webApplication>
+
+    <!-- For Debugging purpuse we could specify some logging informations -->
+    <logging traceSpecification="*=info:com.ibm.ws.security.mp.jwt.*=all:websockets=all:HTTPChannel=all:TCPChannel=all:SSL=all:SSLChannel=all"/>
+</server>
